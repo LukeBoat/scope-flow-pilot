@@ -13,15 +13,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function TopBar() {
+interface TopBarProps {
+  isClientPortal?: boolean;
+  clientName?: string;
+}
+
+export function TopBar({ isClientPortal = false, clientName }: TopBarProps) {
   return (
     <div className="h-16 border-b flex items-center justify-between px-6">
       <div className="flex items-center gap-4 w-full max-w-md">
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <Input 
-          placeholder="Search projects, clients..." 
-          className="h-9 bg-muted/30 border-none" 
-        />
+        {isClientPortal ? (
+          <h2 className="font-medium text-lg">{clientName}</h2>
+        ) : (
+          <>
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search projects, clients..." 
+              className="h-9 bg-muted/30 border-none" 
+            />
+          </>
+        )}
       </div>
       <div className="flex items-center gap-4">
         <DropdownMenu>
@@ -38,8 +49,14 @@ export function TopBar() {
               {[1, 2, 3].map((i) => (
                 <DropdownMenuItem key={i} className="py-2 cursor-pointer">
                   <div className="flex flex-col gap-1">
-                    <p className="font-medium">New revision request</p>
-                    <p className="text-sm text-muted-foreground">Client A requested a revision for Project X</p>
+                    <p className="font-medium">
+                      {isClientPortal ? "Deliverable ready for review" : "New revision request"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {isClientPortal 
+                        ? "A new deliverable is ready for your feedback" 
+                        : "Client A requested a revision for Project X"}
+                    </p>
                     <p className="text-xs text-muted-foreground">5 minutes ago</p>
                   </div>
                 </DropdownMenuItem>
@@ -57,10 +74,10 @@ export function TopBar() {
             <Button variant="ghost" className="flex items-center gap-2 p-1" size="sm">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>{isClientPortal ? "CL" : "AD"}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start text-sm">
-                <span className="font-medium">Alex Johnson</span>
+                <span className="font-medium">{isClientPortal ? clientName || "Client User" : "Alex Johnson"}</span>
               </div>
             </Button>
           </DropdownMenuTrigger>
