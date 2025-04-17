@@ -17,7 +17,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       <div className="flex flex-col flex-1 overflow-hidden">
         <TopBar />
         <ScrollArea className="flex-1">
-          <main className="p-6">{children}</main>
+          <main className="p-6 h-full">{children}</main>
         </ScrollArea>
       </div>
     </div>
