@@ -1,18 +1,25 @@
-
 import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProjectStats } from "@/components/dashboard/ProjectStats";
 import { ProjectFilters } from "@/components/dashboard/ProjectFilters";
 import { ProjectCard } from "@/components/dashboard/ProjectCard";
 import { ProjectDrawer } from "@/components/project/ProjectDrawer";
+import { Analytics } from "@/components/dashboard/Analytics";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@/components/ui/tabs";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("projects");
 
   // Sample project data
   const projects = [
@@ -185,36 +192,51 @@ const Index = () => {
         
         <ProjectStats />
         
-        <div className="mt-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold">Projects</h2>
-            <Button variant="ghost" className="text-sm">View All Projects</Button>
-          </div>
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="mt-8"
+        >
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="projects">Projects</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          </TabsList>
           
-          <ProjectFilters
-            onSearch={setSearchTerm}
-            onStatusChange={setStatusFilter}
-            onSortChange={setSortBy}
-          />
+          <TabsContent value="projects" className="mt-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-semibold">Projects</h2>
+              <Button variant="ghost" className="text-sm">View All Projects</Button>
+            </div>
+            
+            <ProjectFilters
+              onSearch={setSearchTerm}
+              onStatusChange={setStatusFilter}
+              onSortChange={setSortBy}
+            />
+            
+            {filteredProjects.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No projects match your search criteria.</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filteredProjects.map((project) => (
+                  <div 
+                    key={project.id} 
+                    onClick={() => handleProjectClick(project.id)}
+                    className="cursor-pointer"
+                  >
+                    <ProjectCard project={project} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
           
-          {filteredProjects.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No projects match your search criteria.</p>
-            </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredProjects.map((project) => (
-                <div 
-                  key={project.id} 
-                  onClick={() => handleProjectClick(project.id)}
-                  className="cursor-pointer"
-                >
-                  <ProjectCard project={project} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+          <TabsContent value="analytics" className="mt-6">
+            <Analytics isClientView={false} />
+          </TabsContent>
+        </Tabs>
       </div>
       
       {selectedProjectData && (
