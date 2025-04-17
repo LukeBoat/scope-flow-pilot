@@ -179,7 +179,7 @@ function FeedbackItem({ feedback, onResolve }: FeedbackItemProps) {
                   <div className="flex justify-between items-center">
                     <div className="font-medium text-sm flex items-center gap-2">
                       {reply.authorName}
-                      <Badge variant="outline" size="sm" className={`text-[10px] ${
+                      <Badge variant="outline" className={`text-[10px] ${
                         reply.authorType === 'client' 
                           ? 'bg-blue-100 text-blue-800 border-blue-200' 
                           : 'bg-purple-100 text-purple-800 border-purple-200'
