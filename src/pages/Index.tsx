@@ -21,7 +21,6 @@ const Index = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("projects");
 
-  // Sample project data
   const projects = [
     {
       id: "1",
@@ -140,21 +139,17 @@ const Index = () => {
     },
   ];
 
-  // Filter and sort projects
   const filteredProjects = projects
     .filter((project) => {
-      // Search term filter
       const matchesSearch =
         project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         project.client.toLowerCase().includes(searchTerm.toLowerCase());
       
-      // Status filter
       const matchesStatus = statusFilter === "all" || project.status === statusFilter;
       
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
-      // Sort projects
       switch (sortBy) {
         case "newest":
           return b.updatedAt.getTime() - a.updatedAt.getTime();

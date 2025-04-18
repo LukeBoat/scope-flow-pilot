@@ -45,31 +45,6 @@ export function Analytics({ isClientView = false }: AnalyticsProps) {
     { name: 'Overdue', value: 10, color: '#ef4444' },
   ];
 
-  // Activity log data
-  const activityLogData = [
-    { 
-      id: 1, 
-      action: "Deliverable approved", 
-      project: "Website Redesign", 
-      user: "Client A", 
-      time: "2 hours ago" 
-    },
-    { 
-      id: 2, 
-      action: "Feedback submitted", 
-      project: "Mobile App", 
-      user: "Client B", 
-      time: "4 hours ago" 
-    },
-    { 
-      id: 3, 
-      action: "Milestone completed", 
-      project: "Brand Identity", 
-      user: "Design Team", 
-      time: "Yesterday" 
-    },
-  ];
-
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold mb-6">
@@ -102,11 +77,6 @@ export function Analytics({ isClientView = false }: AnalyticsProps) {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              {isClientView 
-                ? "How quickly you've been approving deliverables" 
-                : "Average days from delivery to client approval"}
-            </p>
           </CardContent>
         </Card>
 
@@ -116,7 +86,7 @@ export function Analytics({ isClientView = false }: AnalyticsProps) {
             <CardTitle className="text-base">Deliverable Status Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px] flex items-center justify-center">
+            <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -136,17 +106,6 @@ export function Analytics({ isClientView = false }: AnalyticsProps) {
                   <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
                 </PieChart>
               </ResponsiveContainer>
-            </div>
-            <div className="flex justify-center gap-4 mt-4">
-              {deliverableStatusData.map((status) => (
-                <div key={status.name} className="flex items-center">
-                  <div 
-                    className="w-3 h-3 mr-1 rounded-full" 
-                    style={{ backgroundColor: status.color }}
-                  />
-                  <span className="text-xs">{status.name}</span>
-                </div>
-              ))}
             </div>
           </CardContent>
         </Card>
@@ -183,31 +142,6 @@ export function Analytics({ isClientView = false }: AnalyticsProps) {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            Percentage of feedback requests completed within the requested timeframe
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Recent Activity Log */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-4">
-            {activityLogData.map((activity) => (
-              <li key={activity.id} className="flex justify-between items-start border-b pb-3 border-border last:border-0 last:pb-0">
-                <div>
-                  <p className="font-medium">{activity.action}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {activity.project} • {activity.user}
-                  </p>
-                </div>
-                <span className="text-sm text-muted-foreground">{activity.time}</span>
-              </li>
-            ))}
-          </ul>
         </CardContent>
       </Card>
     </div>

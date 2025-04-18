@@ -1,9 +1,11 @@
-
 import React from "react";
 import { Progress } from "@/components/ui/progress";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-// Add interface for RevisionLog props
 interface RevisionLogProps {
   projectId: string;
   revisionsUsed: number;
@@ -13,11 +15,11 @@ interface RevisionLogProps {
 export function RevisionLog({ projectId, revisionsUsed, revisionsTotal }: RevisionLogProps) {
   const [loading, setLoading] = React.useState(true);
   const [revisions, setRevisions] = React.useState<any[]>([]);
+  const [suggestions, setSuggestions] = React.useState<string[]>([]);
+  const { toast } = useToast();
 
-  // Simulate loading revisions data
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      // Mock data - in a real app, you would fetch this based on projectId
       setRevisions([
         {
           id: 1,
@@ -50,6 +52,42 @@ export function RevisionLog({ projectId, revisionsUsed, revisionsTotal }: Revisi
     return () => clearTimeout(timer);
   }, [projectId]);
 
+  const generateScopeSuggestions = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-helpers', {
+        body: {
+          action: 'suggest-scope',
+          data: {
+            feedbackHistory: revisions.map(rev => rev.notes).join('\n')
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.suggestion) {
+        await supabase.from('scope_suggestions').insert({
+          project_id: projectId,
+          suggestion: data.suggestion
+        });
+
+        toast({
+          title: "AI Suggestion Generated",
+          description: "New scope suggestions have been added based on revision patterns."
+        });
+
+        setSuggestions(prev => [...prev, data.suggestion]);
+      }
+    } catch (error) {
+      console.error('Error generating suggestions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate scope suggestions",
+        variant: "destructive"
+      });
+    }
+  };
+
   const revisionsPercentage = Math.min(Math.round((revisionsUsed / revisionsTotal) * 100), 100);
 
   return (
@@ -70,7 +108,18 @@ export function RevisionLog({ projectId, revisionsUsed, revisionsTotal }: Revisi
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Revision History</h3>
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-medium">Revision History</h3>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={generateScopeSuggestions}
+            className="gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            Generate Insights
+          </Button>
+        </div>
         
         {loading ? (
           <LoadingSkeleton count={3} height="h-24" />
@@ -80,6 +129,19 @@ export function RevisionLog({ projectId, revisionsUsed, revisionsTotal }: Revisi
           </div>
         ) : (
           <div className="space-y-4">
+            {suggestions.length > 0 && (
+              <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                <h4 className="font-medium">AI Suggestions</h4>
+                <ul className="list-disc pl-4 space-y-1">
+                  {suggestions.map((suggestion, index) => (
+                    <li key={index} className="text-sm text-muted-foreground">
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
             {revisions.map((revision) => (
               <div
                 key={revision.id}

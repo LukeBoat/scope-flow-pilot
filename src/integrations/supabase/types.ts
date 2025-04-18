@@ -9,7 +9,117 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      client_metrics: {
+        Row: {
+          avg_approval_time: number | null
+          client_id: string
+          id: string
+          last_updated: string | null
+          project_count: number | null
+          satisfaction_score: number | null
+        }
+        Insert: {
+          avg_approval_time?: number | null
+          client_id: string
+          id?: string
+          last_updated?: string | null
+          project_count?: number | null
+          satisfaction_score?: number | null
+        }
+        Update: {
+          avg_approval_time?: number | null
+          client_id?: string
+          id?: string
+          last_updated?: string | null
+          project_count?: number | null
+          satisfaction_score?: number | null
+        }
+        Relationships: []
+      }
+      deliverable_metrics: {
+        Row: {
+          created_at: string | null
+          deliverable_id: string
+          id: string
+          is_over_scope: boolean | null
+          project_id: string
+          revision_count: number | null
+          satisfaction_rating: number | null
+          time_to_approval: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deliverable_id: string
+          id?: string
+          is_over_scope?: boolean | null
+          project_id: string
+          revision_count?: number | null
+          satisfaction_rating?: number | null
+          time_to_approval?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deliverable_id?: string
+          id?: string
+          is_over_scope?: boolean | null
+          project_id?: string
+          revision_count?: number | null
+          satisfaction_rating?: number | null
+          time_to_approval?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      feedback_summaries: {
+        Row: {
+          created_at: string | null
+          deliverable_id: string
+          id: string
+          summary: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deliverable_id: string
+          id?: string
+          summary: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deliverable_id?: string
+          id?: string
+          summary?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      scope_suggestions: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_implemented: boolean | null
+          project_id: string
+          suggestion: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_implemented?: boolean | null
+          project_id: string
+          suggestion: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_implemented?: boolean | null
+          project_id?: string
+          suggestion?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

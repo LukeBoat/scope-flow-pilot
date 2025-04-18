@@ -1,6 +1,5 @@
-
-import React from "react";
-import { MessageSquare, CheckCircle2, Clock } from "lucide-react";
+import React, { useState } from "react";
+import { MessageSquare, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,8 @@ import { FileAttachment } from "@/components/feedback/FileAttachment";
 import { FeedbackInput } from "@/components/feedback/FeedbackInput";
 import { useFeedback, Feedback } from "@/contexts/FeedbackContext";
 import { formatDistanceToNow } from "date-fns";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
 
 interface FeedbackThreadProps {
   projectId: string;
@@ -17,18 +18,40 @@ interface FeedbackThreadProps {
 
 export function FeedbackThread({ projectId, deliverableId }: FeedbackThreadProps) {
   const { feedback, isLoading, resolveFeedback } = useFeedback();
+  const [summary, setSummary] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
-  };
+  const generateSummary = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-helpers', {
+        body: {
+          action: 'summarize-feedback',
+          data: { feedback }
+        }
+      });
 
-  const formatDate = (date: Date) => {
-    return formatDistanceToNow(new Date(date), { addSuffix: true });
+      if (error) throw error;
+
+      if (data.summary) {
+        await supabase.from('feedback_summaries').insert({
+          deliverable_id: deliverableId,
+          summary: data.summary
+        });
+
+        setSummary(data.summary);
+        toast({
+          title: "Summary Generated",
+          description: "Feedback has been summarized by AI"
+        });
+      }
+    } catch (error) {
+      console.error('Error generating summary:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate feedback summary",
+        variant: "destructive"
+      });
+    }
   };
 
   // Display an empty state if there's no feedback
@@ -46,15 +69,39 @@ export function FeedbackThread({ projectId, deliverableId }: FeedbackThreadProps
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-medium flex items-center gap-2">
-        <MessageSquare className="h-5 w-5" />
-        Feedback
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium flex items-center gap-2">
+          <MessageSquare className="h-5 w-5" />
+          Feedback
+          {feedback.length > 0 && (
+            <Badge variant="outline" className="ml-2">
+              {feedback.length}
+            </Badge>
+          )}
+        </h3>
+        
         {feedback.length > 0 && (
-          <Badge variant="outline" className="ml-2">
-            {feedback.length}
-          </Badge>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={generateSummary}
+            className="gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            Summarize
+          </Button>
         )}
-      </h3>
+      </div>
+
+      {summary && (
+        <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+          <h4 className="font-medium flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            AI Summary
+          </h4>
+          <p className="text-sm text-muted-foreground">{summary}</p>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="animate-pulse space-y-4">
