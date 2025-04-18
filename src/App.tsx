@@ -18,6 +18,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import ClientHistory from "./pages/ClientHistory";
+import ClientPDF from "./pages/ClientPDF";
 
 // Create a client for React Query
 const queryClient = new QueryClient();
@@ -44,6 +45,11 @@ const App = () => (
           
           {/* Client portal routes */}
           <Route path="/client" element={<ClientDashboard />} />
+          <Route path="/client/deliverables" element={<ClientDashboard />} />
+          <Route path="/client/feedback" element={<ClientDashboard />} />
+          <Route path="/client/invoices" element={<ClientDashboard />} />
+          <Route path="/client/history" element={<ClientDashboard />} />
+          <Route path="/client/pdf/:type/:id" element={<ClientPDF />} />
           
           {/* Auth routes */}
           <Route path="/login" element={<Login />} />

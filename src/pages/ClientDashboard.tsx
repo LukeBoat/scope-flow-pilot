@@ -5,9 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, MessageSquare, Clock, CreditCard, CheckCircle2 } from "lucide-react";
+import { 
+  FileText, 
+  MessageSquare, 
+  Clock, 
+  CreditCard, 
+  CheckCircle2, 
+  Download, 
+  Calendar,
+  CheckSquare
+} from "lucide-react";
 import { Analytics } from "@/components/dashboard/Analytics";
 import { MessageThread } from "@/components/messaging/MessageThread";
+import { ClientDeliverables } from "@/components/client/ClientDeliverables";
+import { ClientInvoices } from "@/components/client/ClientInvoices";
+import { ClientFeedback } from "@/components/client/ClientFeedback";
 
 const ClientDashboard = () => {
   // Sample client data - in a real app, this would come from authentication and database
@@ -72,13 +84,27 @@ const ClientDashboard = () => {
   return (
     <ClientPortalLayout clientData={clientData}>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <TabsList className="grid w-full grid-cols-5 mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
-          <TabsTrigger value="messages">Messages</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="deliverables">
+            <CheckSquare className="h-4 w-4 mr-2" />
+            Deliverables
+          </TabsTrigger>
+          <TabsTrigger value="feedback">
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Feedback
+          </TabsTrigger>
+          <TabsTrigger value="invoices">
+            <CreditCard className="h-4 w-4 mr-2" />
+            Invoices
+          </TabsTrigger>
+          <TabsTrigger value="history">
+            <Calendar className="h-4 w-4 mr-2" />
+            History
+          </TabsTrigger>
         </TabsList>
 
+        {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
           {projects.map(project => (
             <Card key={project.id}>
@@ -156,29 +182,56 @@ const ClientDashboard = () => {
                 ))}
               </div>
               <div className="mt-4 flex justify-end">
-                <Button variant="outline" size="sm">View All Invoices</Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <CreditCard className="h-4 w-4" />
+                  View All Invoices
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Download className="h-5 w-5" />
+                Export Options
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button variant="outline" className="justify-start gap-2">
+                  <FileText className="h-4 w-4" />
+                  Export Project Summary
+                </Button>
+                <Button variant="outline" className="justify-start gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Export Feedback as PDF
+                </Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* Deliverables Tab */}
         <TabsContent value="deliverables">
-          <Card>
-            <CardHeader>
-              <CardTitle>Project Deliverables</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Detailed deliverables view will be implemented in the next phase.
-              </p>
-            </CardContent>
-          </Card>
+          <ClientDeliverables />
         </TabsContent>
 
-        <TabsContent value="messages">
+        {/* Feedback Tab */}
+        <TabsContent value="feedback">
+          <ClientFeedback />
+        </TabsContent>
+
+        {/* Invoices Tab */}
+        <TabsContent value="invoices">
+          <ClientInvoices invoices={invoices} />
+        </TabsContent>
+
+        {/* History Tab */}
+        <TabsContent value="history">
           <Card className="h-[600px] flex flex-col">
             <CardHeader>
-              <CardTitle>Project Messages</CardTitle>
+              <CardTitle>Project History</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 overflow-hidden">
               <MessageThread 
@@ -210,10 +263,6 @@ const ClientDashboard = () => {
               />
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="analytics">
-          <Analytics isClientView={true} />
         </TabsContent>
       </Tabs>
     </ClientPortalLayout>
