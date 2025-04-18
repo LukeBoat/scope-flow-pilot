@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { MessageSquare, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,7 +9,7 @@ import { FileAttachment } from "@/components/feedback/FileAttachment";
 import { FeedbackInput } from "@/components/feedback/FeedbackInput";
 import { useFeedback, Feedback } from "@/contexts/FeedbackContext";
 import { formatDistanceToNow } from "date-fns";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 interface FeedbackThreadProps {
