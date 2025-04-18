@@ -17,6 +17,7 @@ import Help from "./pages/Help";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
+import ClientHistory from "./pages/ClientHistory";
 
 // Create a client for React Query
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           {/* Admin routes */}
           <Route path="/" element={<Index />} />
           <Route path="/clients" element={<Clients />} />
+          <Route path="/clients/:clientId/history" element={<ClientHistory />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/reports" element={<Reports />} />
