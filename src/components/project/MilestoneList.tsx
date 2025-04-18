@@ -1,10 +1,13 @@
-
 import { useState } from "react";
 import { ChevronDown, ChevronRight, CheckCircle2, AlertCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+
+interface MilestoneListProps {
+  projectId?: string;
+}
 
 const milestones = [
   {
@@ -57,7 +60,7 @@ const milestones = [
   },
 ];
 
-export function MilestoneList() {
+export function MilestoneList({ projectId }: MilestoneListProps) {
   const [expandedMilestones, setExpandedMilestones] = useState<Record<string, boolean>>({
     "1": false,
     "2": false,
