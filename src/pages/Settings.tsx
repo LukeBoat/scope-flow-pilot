@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { BrandingSettings } from "@/components/settings/BrandingSettings";
@@ -18,13 +17,15 @@ import {
 } from "@/components/ui/card";
 import { Lock, Shield, Bell, Users, Palette, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("general");
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <MainLayout>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Settings</h1>
       </div>
 
@@ -34,7 +35,10 @@ const Settings = () => {
         className="space-y-6"
       >
         <TabsList className="w-full grid grid-cols-3 md:grid-cols-6 h-auto p-1">
-          <TabsTrigger value="general" className="flex gap-2 flex-col md:flex-row py-3">
+          <TabsTrigger 
+            value="general" 
+            className="flex gap-2 flex-col md:flex-row py-3 transition-colors hover:text-brand-purple"
+          >
             <Palette className="h-4 w-4" />
             <span>Branding</span>
           </TabsTrigger>
@@ -60,12 +64,16 @@ const Settings = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="general">
-          <BrandingSettings />
+        <TabsContent value="general" className="animate-fade-in">
+          {isLoading ? (
+            <LoadingSkeleton count={3} />
+          ) : (
+            <BrandingSettings />
+          )}
         </TabsContent>
 
-        <TabsContent value="notifications">
-          <Card>
+        <TabsContent value="notifications" className="animate-fade-in">
+          <Card className="hover:shadow-md transition-shadow duration-200">
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>
               <CardDescription>
@@ -147,8 +155,8 @@ const Settings = () => {
           <PricingPlans />
         </TabsContent>
 
-        <TabsContent value="api">
-          <Card>
+        <TabsContent value="api" className="animate-fade-in">
+          <Card className="hover:shadow-md transition-shadow duration-200">
             <CardHeader>
               <CardTitle>API Keys & Integrations</CardTitle>
               <CardDescription>
@@ -156,7 +164,7 @@ const Settings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border p-4 bg-muted/50">
+              <div className="rounded-lg border p-4 bg-muted/50 hover:bg-muted/70 transition-colors">
                 <div className="flex gap-2 items-center mb-2">
                   <Shield className="w-4 h-4 text-muted-foreground" />
                   <p className="font-medium">Security Badge</p>
