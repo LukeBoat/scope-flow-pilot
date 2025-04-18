@@ -165,7 +165,7 @@ const Settings = () => {
                   Your data is secured with Firebase Security Rules
                 </p>
                 <p className="text-xs p-2 bg-black/5 rounded font-mono overflow-x-auto">
-                  match /projects/{projectId} {'{'}
+                  match /projects/{'{'}projectId{'}'} {'{'}
                   <br />
                   &nbsp;&nbsp;allow read: if request.auth.uid != null && 
                   <br />
