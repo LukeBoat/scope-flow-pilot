@@ -57,7 +57,7 @@ export function DeliverableView({
   };
   
   return (
-    <Card className="border rounded-lg overflow-hidden">
+    <Card className="border rounded-lg overflow-hidden animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
         <div className="space-y-1">
           <CardTitle className="text-xl">{deliverable.name}</CardTitle>

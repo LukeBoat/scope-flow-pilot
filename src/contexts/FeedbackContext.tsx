@@ -142,18 +142,16 @@ export const FeedbackProvider: React.FC<FeedbackProviderProps> = ({
   const addReply = async (feedbackId: string, content: string, fileUrl?: string) => {
     setIsLoading(true);
     try {
-      // In a real implementation, this would be a Firebase call
       const newReply: FeedbackReply = {
         id: `reply-${Date.now()}`,
         content,
-        authorId: "admin1", // Would come from auth
-        authorType: "admin", // Would come from auth
-        authorName: "Sarah Admin", // Would come from user profile
+        authorId: "admin1",
+        authorType: "admin",
+        authorName: "Sarah Admin",
         createdAt: new Date(),
         fileUrl,
       };
 
-      // Add reply to the specified feedback
       setFeedback(prev => prev.map(item => {
         if (item.id === feedbackId) {
           return {
@@ -168,6 +166,9 @@ export const FeedbackProvider: React.FC<FeedbackProviderProps> = ({
         title: "Reply added",
         description: "Your reply has been added successfully",
       });
+      
+      // In a real implementation, we would send an email notification here
+      // if the user has opted in to email notifications
     } catch (error) {
       toast({
         title: "Error",
@@ -182,7 +183,6 @@ export const FeedbackProvider: React.FC<FeedbackProviderProps> = ({
   const resolveFeedback = async (feedbackId: string) => {
     setIsLoading(true);
     try {
-      // In a real implementation, this would be a Firebase call
       setFeedback(prev => prev.map(item => {
         if (item.id === feedbackId) {
           return {
@@ -197,6 +197,9 @@ export const FeedbackProvider: React.FC<FeedbackProviderProps> = ({
         title: "Feedback resolved",
         description: "The feedback has been marked as resolved",
       });
+      
+      // In a real implementation, we would send an email notification here
+      // if the user has opted in to email notifications
     } catch (error) {
       toast({
         title: "Error",
