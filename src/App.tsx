@@ -19,42 +19,54 @@ import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import ClientHistory from "./pages/ClientHistory";
 import ClientPDF from "./pages/ClientPDF";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { RequireAuth } from "@/components/auth/RequireAuth";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { ClientPortalLayout } from "@/components/layout/ClientPortalLayout";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <InvoiceProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/clients/:clientId/history" element={<ClientHistory />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/invoices" element={<Invoices />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/deliverable-feedback" element={<DeliverableFeedback />} />
-            
-            <Route path="/client" element={<ClientDashboard />} />
-            <Route path="/client/deliverables" element={<ClientDashboard />} />
-            <Route path="/client/feedback" element={<ClientDashboard />} />
-            <Route path="/client/invoices" element={<ClientDashboard />} />
-            <Route path="/client/history" element={<ClientDashboard />} />
-            <Route path="/client/pdf/:type/:id" element={<ClientPDF />} />
-            
-            <Route path="/login" element={<Login />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </InvoiceProvider>
+      <AuthProvider>
+        <InvoiceProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/auth" element={<Login />} />
+              
+              {/* Protected routes */}
+              <Route element={<RequireAuth><MainLayout /></RequireAuth>}>
+                <Route path="/" element={<Index />} />
+                <Route path="/clients" element={<Clients />} />
+                <Route path="/clients/:clientId/history" element={<ClientHistory />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/invoices" element={<Invoices />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/deliverable-feedback" element={<DeliverableFeedback />} />
+              </Route>
+              
+              {/* Client portal routes */}
+              <Route element={<RequireAuth><ClientPortalLayout /></RequireAuth>}>
+                <Route path="/client" element={<ClientDashboard />} />
+                <Route path="/client/deliverables" element={<ClientDashboard />} />
+                <Route path="/client/feedback" element={<ClientDashboard />} />
+                <Route path="/client/invoices" element={<ClientDashboard />} />
+                <Route path="/client/history" element={<ClientDashboard />} />
+                <Route path="/client/pdf/:type/:id" element={<ClientPDF />} />
+              </Route>
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </InvoiceProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
