@@ -1,9 +1,9 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { InvoiceProvider } from "@/contexts/InvoiceContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import DeliverableFeedback from "./pages/DeliverableFeedback";
@@ -20,44 +20,41 @@ import Notifications from "./pages/Notifications";
 import ClientHistory from "./pages/ClientHistory";
 import ClientPDF from "./pages/ClientPDF";
 
-// Create a client for React Query
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Admin routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/clients/:clientId/history" element={<ClientHistory />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/invoices" element={<Invoices />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/help" element={<Help />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/deliverable-feedback" element={<DeliverableFeedback />} />
-          
-          {/* Client portal routes */}
-          <Route path="/client" element={<ClientDashboard />} />
-          <Route path="/client/deliverables" element={<ClientDashboard />} />
-          <Route path="/client/feedback" element={<ClientDashboard />} />
-          <Route path="/client/invoices" element={<ClientDashboard />} />
-          <Route path="/client/history" element={<ClientDashboard />} />
-          <Route path="/client/pdf/:type/:id" element={<ClientPDF />} />
-          
-          {/* Auth routes */}
-          <Route path="/login" element={<Login />} />
-          
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <InvoiceProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/clients/:clientId/history" element={<ClientHistory />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/deliverable-feedback" element={<DeliverableFeedback />} />
+            
+            <Route path="/client" element={<ClientDashboard />} />
+            <Route path="/client/deliverables" element={<ClientDashboard />} />
+            <Route path="/client/feedback" element={<ClientDashboard />} />
+            <Route path="/client/invoices" element={<ClientDashboard />} />
+            <Route path="/client/history" element={<ClientDashboard />} />
+            <Route path="/client/pdf/:type/:id" element={<ClientPDF />} />
+            
+            <Route path="/login" element={<Login />} />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </InvoiceProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
