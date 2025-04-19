@@ -46,7 +46,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .eq('id', currentSession.user.id)
             .single();
           
-          setProfile(profileData);
+          if (profileData) {
+            // Ensure the role is either 'admin' or 'client'
+            const validRole: 'admin' | 'client' = 
+              profileData.role === 'admin' ? 'admin' : 'client';
+            
+            setProfile({
+              id: profileData.id,
+              full_name: profileData.full_name,
+              company: profileData.company,
+              avatar_url: profileData.avatar_url,
+              role: validRole
+            });
+          }
         } else {
           setProfile(null);
         }
@@ -57,7 +69,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
-      setLoading(false);
+      
+      if (currentSession?.user) {
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', currentSession.user.id)
+          .single()
+          .then(({ data: profileData }) => {
+            if (profileData) {
+              // Ensure the role is either 'admin' or 'client'
+              const validRole: 'admin' | 'client' = 
+                profileData.role === 'admin' ? 'admin' : 'client';
+              
+              setProfile({
+                id: profileData.id,
+                full_name: profileData.full_name,
+                company: profileData.company,
+                avatar_url: profileData.avatar_url,
+                role: validRole
+              });
+            }
+            setLoading(false);
+          });
+      } else {
+        setLoading(false);
+      }
     });
 
     return () => {

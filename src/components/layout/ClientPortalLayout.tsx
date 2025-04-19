@@ -4,9 +4,10 @@ import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Lock, Shield } from "lucide-react";
+import { Outlet } from "react-router-dom";
 
 interface ClientPortalLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   clientData?: {
     name: string;
     logoUrl?: string;
@@ -72,7 +73,7 @@ export function ClientPortalLayout({
               </div>
             </div>
             
-            {children}
+            {children || <Outlet />}
           </main>
         </ScrollArea>
       </div>
