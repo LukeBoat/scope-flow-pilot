@@ -26,6 +26,21 @@ interface InvoiceContextType {
 
 const InvoiceContext = createContext<InvoiceContextType | undefined>(undefined);
 
+// Mock data store for invoices
+const mockInvoices: Invoice[] = [
+  {
+    id: "inv-001",
+    number: "INV-2025-001",
+    clientId: "client-001",
+    amount: 2500,
+    status: "pending",
+    dueDate: new Date("2025-05-15"),
+    items: [
+      { description: "Website Design", quantity: 1, unitPrice: 2500 }
+    ]
+  }
+];
+
 export function InvoiceProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -33,20 +48,24 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
   const createInvoice = async (invoiceData: Omit<Invoice, 'id'>) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('invoices')
-        .insert(invoiceData)
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      
+      // Generate a mock ID
+      const newInvoice: Invoice = {
+        ...invoiceData,
+        id: `inv-${Date.now()}`
+      };
+      
+      // In a real app, we would insert into Supabase here
+      // For now, just add to our mock array and simulate a delay
+      mockInvoices.push(newInvoice);
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+      
       toast({
         title: "Invoice Created",
         description: "Invoice has been created successfully."
       });
 
-      return data;
+      return newInvoice;
     } catch (error) {
       console.error('Error creating invoice:', error);
       toast({
@@ -63,12 +82,15 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
   const updateInvoice = async (id: string, updates: Partial<Invoice>) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('invoices')
-        .update(updates)
-        .eq('id', id);
-
-      if (error) throw error;
+      
+      // Find and update the invoice in our mock data
+      const index = mockInvoices.findIndex(inv => inv.id === id);
+      if (index !== -1) {
+        mockInvoices[index] = { ...mockInvoices[index], ...updates };
+      }
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Invoice Updated",
@@ -89,12 +111,12 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
   const generatePDF = async (invoice: Invoice) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke('generate-invoice-pdf', {
-        body: { invoice }
-      });
-
-      if (error) throw error;
-      return data.url;
+      
+      // Simulate PDF generation
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Return a mock URL
+      return `https://example.com/invoices/${invoice.id}.pdf`;
     } catch (error) {
       console.error('Error generating PDF:', error);
       toast({
@@ -108,7 +130,7 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const value = {
+  const value: InvoiceContextType = {
     createInvoice,
     updateInvoice,
     generatePDF,

@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 
 interface Project {
   id: string;
@@ -14,6 +13,9 @@ interface Project {
   description: string;
 }
 
+// Mock data for projects
+const mockProjects: Project[] = [];
+
 export function useProjectActions() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -22,20 +24,25 @@ export function useProjectActions() {
   const createProject = async (projectData: Omit<Project, 'id'>) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('projects')
-        .insert(projectData)
-        .select()
-        .single();
-
-      if (error) throw error;
+      
+      // Generate a mock ID and create the project
+      const newProject: Project = {
+        ...projectData,
+        id: `project-${Date.now()}`
+      };
+      
+      // Add to mock data
+      mockProjects.push(newProject);
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Project Created",
         description: "Project has been created successfully."
       });
 
-      return data;
+      return newProject;
     } catch (error) {
       console.error('Error creating project:', error);
       toast({
@@ -43,6 +50,7 @@ export function useProjectActions() {
         description: "Failed to create project",
         variant: "destructive"
       });
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -51,12 +59,15 @@ export function useProjectActions() {
   const updateProject = async (id: string, updates: Partial<Project>) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('projects')
-        .update(updates)
-        .eq('id', id);
-
-      if (error) throw error;
+      
+      // Find and update the project in our mock data
+      const index = mockProjects.findIndex(proj => proj.id === id);
+      if (index !== -1) {
+        mockProjects[index] = { ...mockProjects[index], ...updates };
+      }
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Project Updated",
@@ -77,12 +88,15 @@ export function useProjectActions() {
   const deleteProject = async (id: string) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('projects')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      
+      // Remove the project from our mock data
+      const index = mockProjects.findIndex(proj => proj.id === id);
+      if (index !== -1) {
+        mockProjects.splice(index, 1);
+      }
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Project Deleted",

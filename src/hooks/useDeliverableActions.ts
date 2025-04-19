@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 interface Deliverable {
   id: string;
@@ -11,6 +10,9 @@ interface Deliverable {
   dueDate: Date;
 }
 
+// Mock data for deliverables
+const mockDeliverables: Deliverable[] = [];
+
 export function useDeliverableActions() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -18,25 +20,25 @@ export function useDeliverableActions() {
   const createDeliverable = async (deliverableData: Omit<Deliverable, 'id'>) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('deliverables')
-        .insert(deliverableData)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      await supabase.from('deliverable_metrics').insert({
-        deliverable_id: data.id,
-        project_id: deliverableData.projectId,
-      });
+      
+      // Generate a mock ID and create the deliverable
+      const newDeliverable: Deliverable = {
+        ...deliverableData,
+        id: `del-${Date.now()}`
+      };
+      
+      // Add to mock data
+      mockDeliverables.push(newDeliverable);
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Deliverable Created",
         description: "Deliverable has been created successfully."
       });
 
-      return data;
+      return newDeliverable;
     } catch (error) {
       console.error('Error creating deliverable:', error);
       toast({
@@ -44,6 +46,7 @@ export function useDeliverableActions() {
         description: "Failed to create deliverable",
         variant: "destructive"
       });
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -52,12 +55,15 @@ export function useDeliverableActions() {
   const updateDeliverable = async (id: string, updates: Partial<Deliverable>) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('deliverables')
-        .update(updates)
-        .eq('id', id);
-
-      if (error) throw error;
+      
+      // Find and update the deliverable in our mock data
+      const index = mockDeliverables.findIndex(del => del.id === id);
+      if (index !== -1) {
+        mockDeliverables[index] = { ...mockDeliverables[index], ...updates };
+      }
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Deliverable Updated",
@@ -78,12 +84,15 @@ export function useDeliverableActions() {
   const deleteDeliverable = async (id: string) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('deliverables')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      
+      // Remove the deliverable from our mock data
+      const index = mockDeliverables.findIndex(del => del.id === id);
+      if (index !== -1) {
+        mockDeliverables.splice(index, 1);
+      }
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Deliverable Deleted",

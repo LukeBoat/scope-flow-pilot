@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 interface Revision {
   id: string;
@@ -11,6 +10,9 @@ interface Revision {
   status: 'pending' | 'completed';
 }
 
+// Mock data for revisions
+const mockRevisions: Revision[] = [];
+
 export function useRevisionLog() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -18,25 +20,25 @@ export function useRevisionLog() {
   const logRevision = async (revisionData: Omit<Revision, 'id'>) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('revisions')
-        .insert(revisionData)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Update deliverable metrics
-      await supabase.rpc('increment_revision_count', {
-        deliverable_id: revisionData.deliverableId
-      });
+      
+      // Generate a mock ID and create the revision
+      const newRevision: Revision = {
+        ...revisionData,
+        id: `rev-${Date.now()}`
+      };
+      
+      // Add to mock data
+      mockRevisions.push(newRevision);
+      
+      // Simulate network delay and revision count increment
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Revision Logged",
         description: "Revision request has been logged successfully."
       });
 
-      return data;
+      return newRevision;
     } catch (error) {
       console.error('Error logging revision:', error);
       toast({
@@ -44,6 +46,7 @@ export function useRevisionLog() {
         description: "Failed to log revision",
         variant: "destructive"
       });
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -52,12 +55,15 @@ export function useRevisionLog() {
   const updateRevisionStatus = async (id: string, status: 'pending' | 'completed') => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('revisions')
-        .update({ status })
-        .eq('id', id);
-
-      if (error) throw error;
+      
+      // Find and update the revision in our mock data
+      const index = mockRevisions.findIndex(rev => rev.id === id);
+      if (index !== -1) {
+        mockRevisions[index] = { ...mockRevisions[index], status };
+      }
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast({
         title: "Revision Updated",
@@ -78,14 +84,19 @@ export function useRevisionLog() {
   const getRevisionHistory = async (deliverableId: string) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('revisions')
-        .select('*')
-        .eq('deliverableId', deliverableId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data;
+      
+      // Filter revisions by deliverableId in our mock data
+      const filteredRevisions = mockRevisions.filter(rev => rev.deliverableId === deliverableId);
+      
+      // Sort by mock created_at (we'll use the id which contains a timestamp)
+      const sortedRevisions = [...filteredRevisions].sort((a, b) => 
+        parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1])
+      );
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return sortedRevisions;
     } catch (error) {
       console.error('Error fetching revision history:', error);
       toast({
