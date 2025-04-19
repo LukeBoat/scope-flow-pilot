@@ -16,9 +16,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface TopBarProps {
   isClientPortal?: boolean;
   clientName?: string;
+  passwordProtected?: boolean;
 }
 
-export function TopBar({ isClientPortal = false, clientName }: TopBarProps) {
+export function TopBar({ isClientPortal = false, clientName, passwordProtected = false }: TopBarProps) {
   return (
     <div className="h-16 border-b flex items-center justify-between px-6">
       <div className="flex items-center gap-4 w-full max-w-md">
