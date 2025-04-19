@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,8 +24,8 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
+import { ProjectCreateDialog } from "@/components/project/ProjectCreateDialog";
 
-// Mock data for projects
 const projectsData = [
   { 
     id: "p1", 
@@ -111,7 +110,6 @@ const Projects = () => {
 
   const { toast } = useToast();
 
-  // Function to get status badge color
   const getStatusColor = (status) => {
     switch(status) {
       case "In Progress":
@@ -127,7 +125,6 @@ const Projects = () => {
     }
   };
 
-  // Function to handle project search
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
@@ -148,7 +145,6 @@ const Projects = () => {
     setFilteredProjects(filtered);
   };
 
-  // Function to handle status filter
   const handleStatusFilter = (value) => {
     setStatusFilter(value);
     
@@ -168,7 +164,6 @@ const Projects = () => {
     setFilteredProjects(filtered);
   };
 
-  // Function to handle project creation
   const handleCreateProject = () => {
     if (!newProject.name || !newProject.client || !newProject.dueDate) {
       toast({
@@ -181,7 +176,6 @@ const Projects = () => {
 
     setIsLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       const createdProject = {
         id: `p${projects.length + 1}`,
@@ -218,7 +212,6 @@ const Projects = () => {
     }, 1000);
   };
 
-  // Function to handle project deletion
   const handleDeleteProject = (id) => {
     const updatedProjects = projects.filter(project => project.id !== id);
     setProjects(updatedProjects);
@@ -234,82 +227,7 @@ const Projects = () => {
     <MainLayout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Projects</h1>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Project
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New Project</DialogTitle>
-              <DialogDescription>
-                Add a new project to your workspace.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <label htmlFor="name" className="text-right text-sm font-medium">
-                  Name
-                </label>
-                <Input
-                  id="name"
-                  value={newProject.name}
-                  onChange={(e) => setNewProject({...newProject, name: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <label htmlFor="client" className="text-right text-sm font-medium">
-                  Client
-                </label>
-                <Input
-                  id="client"
-                  value={newProject.client}
-                  onChange={(e) => setNewProject({...newProject, client: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <label htmlFor="dueDate" className="text-right text-sm font-medium">
-                  Due Date
-                </label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={newProject.dueDate}
-                  onChange={(e) => setNewProject({...newProject, dueDate: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <label htmlFor="description" className="text-right text-sm font-medium">
-                  Description
-                </label>
-                <Input
-                  id="description"
-                  value={newProject.description}
-                  onChange={(e) => setNewProject({...newProject, description: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleCreateProject} disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create Project"
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <ProjectCreateDialog />
       </div>
 
       <div className="flex flex-wrap gap-4 mb-6">
